@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NAV CANADA — Standards Overview</title>
+<style>
+:root{
+  --bg:#0f1220;--panel:#161a2b;--panel-2:#1b2036;--text:#eef1f7;--muted:#b7bfd6;
+  --c1:#7dd3fc;--c2:#34d399;--c3:#f59e0b;--c4:#f87171;
+  --radius:14px;--shadow:0 10px 30px rgba(0,0,0,.35);--gap:clamp(10px,2vw,18px)
+}
+*{box-sizing:border-box}html,body{height:100%}
+body{
+  margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  color:var(--text);
+  background:radial-gradient(1200px 800px at 10% -10%, #1a2038 0, transparent 60%),
+             radial-gradient(1200px 800px at 120% -10%, #132144 0, transparent 60%),
+             var(--bg)
+}
+.wrap{max-width:1100px;margin:36px auto;padding:0 16px 36px}
+header{display:flex;align-items:center;justify-content:space-between;gap:var(--gap);margin-bottom:14px}
+header h1{margin:0;font-size:clamp(18px,1.8vw,22px);font-weight:700;letter-spacing:.3px}
+header .hint{color:var(--muted);font-size:.95rem}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:var(--gap)}
+@media (max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.grid{grid-template-columns:1fr}}
+.card{
+  position:relative;background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);
+  padding:16px 14px 14px;box-shadow:var(--shadow);cursor:pointer;outline:none;
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease
+}
+.card:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(0,0,0,.45)}
+.card:focus-visible{box-shadow:var(--shadow),0 0 0 3px rgba(125,211,252,.45)}
+.card.active{border-color:rgba(125,211,252,.35)}
+.card .icon{width:26px;height:26px;border-radius:9px;display:grid;place-items:center;margin-bottom:10px}
+.card h2{margin:.2rem 0 .35rem;font-size:1.05rem}
+.card p{margin:.1rem 0;color:var(--muted);font-size:.92rem}
+.chev{position:absolute;right:10px;top:10px;opacity:.75;transition:transform .2s ease}
+.card.active .chev{transform:rotate(180deg)}
+.details{
+  margin-top:16px;background:linear-gradient(180deg,rgba(22,26,43,.9),rgba(27,32,54,.95));
+  border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);box-shadow:var(--shadow)
+}
+.details[hidden]{display:none}
+.details-inner{padding:18px}
+.details h3{margin:4px 0 10px;font-size:1.05rem}
+.details ul{margin:0;padding-left:18px}
+.details li{margin:8px 0}
+.controls{display:flex;gap:10px;align-items:center;justify-content:flex-end;margin:6px 12px 0 12px}
+.btn{
+  appearance:none;border:1px solid rgba(255,255,255,.14);background:#0f1527;color:var(--text);
+  padding:8px 10px;border-radius:10px;cursor:pointer;font-weight:600
+}
+.btn:hover{border-color:rgba(125,211,252,.35)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>NAV CANADA — Four Categories of Standards</h1>
+    <div class="hint">Click a box to reveal the fundamentals below. Click another to switch; “Collapse” hides details.</div>
+  </header>
+
+  <div class="grid" id="conceptGrid" role="list" aria-label="Standards Categories"></div>
+
+  <section class="details" id="detailsPanel" hidden aria-live="polite" aria-atomic="true">
+    <div class="controls"><button class="btn" id="collapseBtn" aria-controls="detailsPanel">Collapse</button></div>
+    <div class="details-inner" id="detailsInner"></div>
+  </section>
+</div>
+
+<script>
+const concepts = [
+  {
+    id:"cns",
+    title:"CNS & Surveillance Standards",
+    summary:"Communications, Navigation, Surveillance service performance and resilience.",
+    color:"var(--c1)",
+    bullets:[
+      "Service levels: availability, latency and coverage SLAs for VHF/HF, Mode S/ADS-B, MLAT/PSR.",
+      "Redundancy & resilience: dual routes, power/UPS, failover sites; space-based ADS-B for remote/oceanic continuity.",
+      "Interoperability: compliance with ICAO Annex 10 and EUROCONTROL ASTERIX; AMHS and cross-border data compatibility.",
+      "Security & lifecycle: cyber hardening, configuration control, spares/obsolescence plans and scheduled upgrades."
+    ]
+  },
+  {
+    id:"ats",
+    title:"ATS Operations Standards",
+    summary:"Controller procedures, separation and coordination across FIRs.",
+    color:"var(--c2)",
+    bullets:[
+      "Separation & procedures aligned to ICAO PANS-ATM; use of STCA/MSAW/MTCD as ground-based safety nets.",
+      "Sectorization & staffing: workload thresholds, capacity metrics and opening/closing criteria.",
+      "Handover & coordination: AIDC/NAM-ICD messaging; Letters of Agreement with FAA/NATS and adjacent FIRs.",
+      "Contingency modes: degraded-surveillance/communications playbooks, data-link/voice fallback and recovery."
+    ]
+  },
+  {
+    id:"aim",
+    title:"AIM & Data Standards",
+    summary:"Aeronautical information quality, publication and digital data exchange.",
+    color:"var(--c3)",
+    bullets:[
+      "Data quality: accuracy, integrity and timeliness for AIP, NOTAM and charts per ICAO Annex 15.",
+      "Digital data: AIXM datasets; AMHS connectivity; SWIM-ready interfaces for partners.",
+      "AIRAC governance: controlled change windows, effective-date discipline and stakeholder notifications.",
+      "Data stewardship: version control, audit trails and integration of third-party terrain/obstacle data."
+    ]
+  },
+  {
+    id:"safety",
+    title:"Safety & Risk Management Standards",
+    summary:"SMS, change safety cases and performance monitoring.",
+    color:"var(--c4)",
+    bullets:[
+      "Safety Management System: hazard reporting, risk assessment, assurance and promotion across units.",
+      "Change management: formal safety cases and operational acceptance for new systems/procedures.",
+      "Occurrence management: reporting, investigation, corrective actions and TSB/Regulator interfaces.",
+      "Performance monitoring: KPIs (e.g., loss-of-separation, STCA nuisance), audits and continuous improvement."
+    ]
+  }
+];
+
+const grid=document.getElementById('conceptGrid');
+const details=document.getElementById('detailsPanel');
+const detailsInner=document.getElementById('detailsInner');
+const collapseBtn=document.getElementById('collapseBtn');
+let activeId=null;
+
+concepts.forEach((c)=>{
+  const card=document.createElement('button');
+  card.className='card';card.type='button';card.setAttribute('role','listitem');
+  card.setAttribute('aria-expanded','false');card.dataset.id=c.id;
+  card.innerHTML=`
+    <span class="icon" style="color:${c.color};background:color-mix(in srgb, ${c.color} 18%, transparent)">
+      <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6" fill="currentColor" opacity="0.95"/></svg>
+    </span>
+    <h2>${escapeHTML(c.title)}</h2>
+    <p>${escapeHTML(c.summary)}</p>
+    <svg class="chev" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>
+  `;
+  card.addEventListener('click',()=>openDetails(c.id));
+  grid.appendChild(card);
+  card.addEventListener('keydown',(e)=>{
+    const cards=[...grid.querySelectorAll('.card')];
+    const i=cards.indexOf(card);
+    const cols=getComputedStyle(grid).gridTemplateColumns.split(' ').length;
+    let next=null;
+    if(['ArrowRight','ArrowDown'].includes(e.key)){next=cards[(i+(e.key==='ArrowRight'?1:cols))%cards.length]}
+    else if(['ArrowLeft','ArrowUp'].includes(e.key)){next=cards[(i-(e.key==='ArrowLeft'?1:cols)+cards.length)%cards.length]}
+    if(next){next.focus();e.preventDefault()}
+  });
+});
+
+collapseBtn.addEventListener('click',collapseDetails);
+
+function openDetails(id){
+  if(activeId===id){collapseDetails();return}
+  activeId=id;
+  grid.querySelectorAll('.card').forEach(btn=>{
+    const on=btn.dataset.id===id;
+    btn.classList.toggle('active',on);
+    btn.setAttribute('aria-expanded',on?'true':'false');
+  });
+  const c=concepts.find(x=>x.id===id);
+  renderDetails(c);details.hidden=false;
+  setTimeout(()=>details.scrollIntoView({behavior:'smooth',block:'nearest'}),10);
+}
+function collapseDetails(){
+  activeId=null;details.hidden=true;
+  grid.querySelectorAll('.card').forEach(btn=>{btn.classList.remove('active');btn.setAttribute('aria-expanded','false')});
+}
+function renderDetails(c){
+  const bullets=c.bullets.map(li=>`<li>${li}</li>`).join('');
+  detailsInner.innerHTML=`
+    <h3 style="color:${c.color}">${escapeHTML(c.title)} — Fundamentals</h3>
+    <ul>${bullets}</ul>
+  `;
+}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+</script>
+</body>
+</html>
